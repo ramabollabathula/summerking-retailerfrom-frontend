@@ -1,116 +1,123 @@
-import React from 'react';
-import FormHeader from './FormHeader';
-import FormCard from './FormCard';
+import React, { useState } from "react";
+import FormHeader from "./FormHeader";
+import FormCard from "./FormCard";
 
 const RetailerForm: React.FC = () => {
+  const [form, setForm] = useState({
+    distributor_name: "",
+    location: "",
+    salesman_name: "",
+    shop_name: "",
+    shop_address: "",
+    contact_person: "",
+    contact_mobile: "",
+    shop_age: "",
+    google_map_link: ""
+  });
+
+  const [photo, setPhoto] = useState<File | null>(null);
+
+  const handleChange = (e: any) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const link = `https://www.google.com/maps?q=${lat},${lng}`;
+
+        setForm((prev) => ({
+          ...prev,
+          google_map_link: link
+        }));
+      },
+      () => {
+        alert("Location permission denied");
+      },
+      { enableHighAccuracy: true }
+    );
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    const data = new FormData();
+    Object.entries(form).forEach(([key, value]) => {
+      data.append(key, value);
+    });
+    if (photo) data.append("shop_photo", photo);
+
+    const res = await fetch("http://localhost:5000/api/retailers", {
+      method: "POST",
+      body: data
+    });
+
+    const json = await res.json();
+    alert(json.message);
+  };
+
   return (
-    <div className="form-page-bg py-4">
+    <form onSubmit={handleSubmit} className="form-page-bg py-4">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-12 col-md-10 col-lg-8 col-xl-7">
-            {/* Form Header */}
             <FormHeader />
 
-            {/* Distributor Name */}
-            <FormCard
-              hindiLabel="डिस्ट्रिब्यूटर का नाम"
-              englishLabel="Distributor name"
-              required
-            />
+            <FormCard hindiLabel="डिस्ट्रिब्यूटर का नाम" englishLabel="Distributor name" required name="distributor_name" value={form.distributor_name} onChange={handleChange} />
+            <FormCard hindiLabel="लोकेशन / शहर / मार्केट
+" englishLabel="Location/ city/market " required name="location" value={form.location} onChange={handleChange} />
+            <FormCard hindiLabel="सेल्समैन" englishLabel="Salesman name" name="salesman_name" value={form.salesman_name} onChange={handleChange} />
+            <FormCard hindiLabel="रिटेल शॉप का नाम" englishLabel="Retail shop name " required name="shop_name" value={form.shop_name} onChange={handleChange} />
+            <FormCard hindiLabel="रिटेल शॉप का पूरा पता /  पिन कोड" englishLabel="Full retail shop address / pin code" inputType="long" name="shop_address" value={form.shop_address} onChange={handleChange} />
+            <FormCard hindiLabel="संपर्क व्यक्ति का नाम" englishLabel="Contact person name " name="contact_person" value={form.contact_person} onChange={handleChange} />
+            <FormCard hindiLabel="संपर्क व्यक्ति का मोबाइल नंबर
+" englishLabel="Contact person mobile number " name="contact_mobile" value={form.contact_mobile} onChange={handleChange} />
+            <FormCard hindiLabel="दुकान कितने साल पुरानी है (वर्षों में)" englishLabel="Shop age (in years)" name="shop_age" value={form.shop_age} onChange={handleChange} />
 
-            {/* Location / City / Market */}
-            <FormCard
-              hindiLabel="लोकेशन / शहर / मार्केट"
-              englishLabel="Location/ city/market"
-              required
-            />
-
-            {/* Salesman Name */}
-            <FormCard
-              hindiLabel="सेल्समैन का नाम"
-              englishLabel="Salesman name"
-            />
-
-            {/* Retail Shop Name */}
-            <FormCard
-              hindiLabel="रिटेल शॉप का नाम"
-              englishLabel="Retail shop name"
-              required
-            />
-
-            {/* Full Retail Shop Address */}
-            <FormCard
-              hindiLabel="रिटेल शॉप का पूरा पता / पिन कोड"
-              englishLabel="Full retail shop address / pin code"
-              required
-              inputType="long"
-            />
-
-            {/* Contact Person Name */}
-            <FormCard
-              hindiLabel="संपर्क व्यक्ति का नाम"
-              englishLabel="Contact person name"
-              required
-            />
-
-            {/* Contact Person Mobile Number */}
-            <FormCard
-              hindiLabel="संपर्क व्यक्ति का मोबाइल नंबर"
-              englishLabel="Contact person mobile number"
-              required
-            />
-
-            {/* Shop Age */}
-            <FormCard
-              hindiLabel="दुकान कितने साल पुरानी है (वर्षों में)"
-              englishLabel="Shop age (in years)"
-            />
-
-            {/* Upload Shop Photo */}
             <FormCard
               hindiLabel="दुकान की फोटो अपलोड करे"
               englishLabel="Upload shop photo"
-              required
               inputType="file"
+              name="shop_photo"
+              onFileChange={(file) => setPhoto(file)}
             />
 
-            {/* Google Map Location Link */}
-            <FormCard
-              hindiLabel="Google Map लोकेशन की लिंक अपलोड करें"
-              englishLabel="Upload google map location link"
-              required
-              inputType="long"
-            />
+            <div className="d-flex align-items-end gap-2">
+              <div style={{ flex: 1 }}>
+                <FormCard
+                  hindiLabel="Google Map लोकेशन की लिंक अपलोड करें"
+                  englishLabel="Upload google map location link"
+                  inputType="long"
+                  name="google_map_link"
+                  value={form.google_map_link}
+                  onChange={handleChange}
+                />
+              </div>
 
-            {/* Submit Button */}
-            <div className="d-flex justify-content-between align-items-center mt-4 mb-5">
-              <button
-                type="submit"
-                className="btn px-4 py-2"
-                style={{
-                  backgroundColor: 'hsl(262, 83%, 58%)',
-                  color: 'white',
-                  borderRadius: '4px',
-                  fontWeight: 500,
-                }}
-              >
-                Submit
-              </button>
               <button
                 type="button"
-                className="btn"
-                style={{
-                  color: 'hsl(262, 83%, 58%)',
-                  fontWeight: 500,
-                }}
+                className="btn btn-outline-primary"
+                style={{ height: "42px", marginBottom: "16px" }}
+                onClick={getCurrentLocation}
               >
-                Clear form
+                📍
               </button>
             </div>
+
+            <button type="submit" className="btn btn-primary w-100 mt-4">
+              Submit
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
