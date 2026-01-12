@@ -2,104 +2,138 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Google Forms Style Design System */
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+:root {
+  /* Form theme colors */
+  --form-bg: 252 100% 97%;
+  --form-card-bg: 0 0% 100%;
+  --form-accent: 262 83% 58%;
+  --form-accent-light: 262 100% 95%;
+  --form-text-primary: 262 70% 45%;
+  --form-text-secondary: 0 0% 15%;
+  --form-text-muted: 0 0% 50%;
+  --form-required: 0 84% 60%;
+  --form-border: 0 0% 90%;
+  --form-input-border: 262 30% 80%;
+  --form-link: 210 100% 45%;
+  
+  /* Semantic tokens */
+  --background: var(--form-bg);
+  --foreground: 222.2 84% 4.9%;
+  --card: var(--form-card-bg);
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: var(--form-accent);
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: var(--form-accent-light);
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: var(--form-accent);
+  --radius: 0.5rem;
+}
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+/* Form-specific styles */
+.form-page-bg {
+  background-color: hsl(var(--form-bg));
+  min-height: 100vh;
+}
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+.form-card {
+  background-color: hsl(var(--form-card-bg));
+  border-radius: 8px;
+  border-left: 4px solid hsl(var(--form-accent));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+}
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+.form-card-header {
+  background-color: hsl(var(--form-card-bg));
+  border-radius: 8px;
+  border-top: 10px solid hsl(var(--form-accent));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+}
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+.form-label-hindi {
+  color: hsl(var(--form-text-primary));
+  font-size: 1rem;
+  font-weight: 400;
+}
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+.form-label-english {
+  color: hsl(var(--form-text-secondary));
+  font-size: 0.9rem;
+  font-weight: 500;
+}
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+.form-required {
+  color: hsl(var(--form-required));
+  margin-left: 4px;
+}
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+.form-input-placeholder {
+  border: none;
+  border-bottom: 1px solid hsl(var(--form-border));
+  border-radius: 0;
+  padding: 8px 0;
+  font-size: 0.875rem;
+  color: hsl(var(--form-text-muted));
+  background: transparent;
+}
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+.form-input-placeholder:focus {
+  outline: none;
+  border-bottom: 2px solid hsl(var(--form-accent));
+  box-shadow: none;
+}
 
-    --radius: 0.5rem;
+.form-file-btn {
+  border: 1px solid hsl(var(--form-border));
+  background: hsl(var(--form-card-bg));
+  color: hsl(var(--form-text-muted));
+  font-size: 0.875rem;
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
 
-    --sidebar-background: 0 0% 98%;
+.form-file-btn:hover {
+  background-color: hsl(var(--form-bg));
+}
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+.form-link {
+  color: hsl(var(--form-link));
+  font-size: 0.875rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+.form-link:hover {
+  text-decoration: underline;
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
