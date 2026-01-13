@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
+import { useAuth } from "../contexts/AuthContext";
+import logo from "../assets/summerking-logo.png";   // 👈 Company logo import
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [validated, setValidated] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    
+
     if (form.checkValidity() === false) {
       e.stopPropagation();
       setValidated(true);
@@ -23,9 +24,9 @@ const Login = () => {
 
     const success = login(email, password);
     if (success) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     } else {
-      setError('Please enter valid credentials');
+      setError("Please enter valid credentials");
     }
   };
 
@@ -36,18 +37,31 @@ const Login = () => {
           <Col xs={12} sm={10} md={8} lg={5} xl={4}>
             <Card className="shadow-lg border-0">
               <Card.Body className="p-4 p-md-5">
+
+                {/* 🔥 Company Logo */}
                 <div className="text-center mb-4">
                   <div className="login-icon mb-3">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                      <circle cx="12" cy="7" r="4"/>
-                    </svg>
+                  <img
+  src={logo}
+  alt="Company Logo"
+  style={{
+    height: "100px",
+    width: "auto",
+    maxWidth: "100%",
+    objectFit: "contain"
+  }}
+/>
                   </div>
+
                   <h2 className="fw-bold text-primary mb-1">Welcome Back</h2>
                   <p className="text-muted">Sign in to continue</p>
                 </div>
 
-                {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
+                {error && (
+                  <Alert variant="danger" dismissible onClose={() => setError("")}>
+                    {error}
+                  </Alert>
+                )}
 
                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                   <Form.Group className="mb-3" controlId="email">
@@ -91,6 +105,7 @@ const Login = () => {
                 <p className="text-center text-muted mt-4 mb-0 small">
                   Use any email and password to login
                 </p>
+
               </Card.Body>
             </Card>
           </Col>
