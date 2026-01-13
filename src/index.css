@@ -137,3 +137,156 @@
     color: hsl(var(--foreground));
   }
 }
+
+/* Login Page Styles */
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, hsl(211 100% 50% / 0.1) 0%, hsl(211 100% 50% / 0.05) 100%);
+  background-color: hsl(var(--app-background));
+}
+
+.login-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, hsl(211 100% 50%), hsl(211 100% 40%));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  color: white;
+}
+
+/* Dashboard Styles */
+.dashboard-page {
+  min-height: 100vh;
+  background-color: hsl(var(--app-background));
+}
+
+/* Table Styles */
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.sortable-header:hover {
+  background-color: hsl(210 40% 94%);
+}
+
+.sort-icon {
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+/* Avatar Circle */
+.avatar-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(211 100% 50%), hsl(211 100% 60%));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Status Badge */
+.status-badge {
+  font-weight: 500;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* Card Enhancements */
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.card-header {
+  border-bottom: 1px solid hsl(var(--app-border));
+}
+
+.card-footer {
+  border-top: 1px solid hsl(var(--app-border));
+}
+
+/* Form Control Focus */
+.form-control:focus {
+  border-color: hsl(211 100% 50%);
+  box-shadow: 0 0 0 0.2rem hsl(211 100% 50% / 0.15);
+}
+
+/* Button Primary Enhancement */
+.btn-primary {
+  background: linear-gradient(135deg, hsl(211 100% 50%), hsl(211 100% 45%));
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, hsl(211 100% 45%), hsl(211 100% 40%));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(211 100% 50% / 0.3);
+}
+
+/* Table row hover */
+.table-hover tbody tr:hover {
+  background-color: hsl(210 40% 97%);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .login-page .card-body {
+    padding: 1.5rem !important;
+  }
+  
+  .dashboard-page .card-header {
+    padding: 1rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 14px;
+  }
+  
+  .avatar-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+}
+
+/* Navbar brand */
+.navbar-brand svg {
+  vertical-align: middle;
+}
+
+/* Input group styling */
+.input-group-text {
+  border-color: hsl(var(--app-border));
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Base styles */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+}
