@@ -166,7 +166,7 @@ const Dashboard = () => {
                           <td key={col} className="px-4 py-2">
                             {r.shop_photo && (
                               <img
-                                src={`http://localhost:5000/uploads/${r.shop_photo}`}
+                                src={`http://localhost:5000${r.shop_photo}`}
                                 width={60}
                                 height={60}
                                 className="object-cover rounded"
