@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
 import UploadRetailer from "./pages/UploadRetailer";
+import RetailerForm from "./components/RetailerForm";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +22,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<RetailerForm />} />
+            <Route path="/login" element={<Login />} />
             <Route
               path="/dashboard"
               element={

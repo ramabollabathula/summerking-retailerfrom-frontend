@@ -9,7 +9,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate("/login");
   };
 
   const handleBulkUpload = () => {
@@ -17,7 +17,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-blue-600 text-white px-6 py-4 flex justify-between items-center shadow-md">
+    <div className="bg-blue-300 text-white px-6 py-4 flex justify-between items-center shadow-md">
 
       {/* 🔥 Brand section */}
       <div className="flex items-center gap-3">
@@ -30,12 +30,12 @@ const Navbar = () => {
 
       {/* Right side buttons */}
       <div className="flex gap-4">
-        <button
+        {/* <button
           onClick={handleBulkUpload}
           className="bg-white text-blue-600 font-medium px-4 py-1 rounded hover:bg-gray-100"
         >
           Bulk Upload
-        </button>
+        </button> */}
 
         <button
           onClick={handleLogout}

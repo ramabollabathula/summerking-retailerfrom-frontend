@@ -3,6 +3,7 @@ import * as XLSX from "xlsx";
 import axios from "axios";
 import Navbar from "./Navbar"; 
 import { useNavigate } from "react-router-dom";
+import { API_URLS } from "@/components/Apiurls/Apiurls";
 
 interface RetailerRow {
   timestamp: string | null;
@@ -66,7 +67,7 @@ const UploadRetailer: React.FC = () => {
     setSuccess(false);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/bullupload", {
+      const res = await axios.post(`${API_URLS}/api/bullupload`, {
         data: excelData,
       });
 

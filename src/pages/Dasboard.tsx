@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Navbar from "./Navbar";
+import { API_URLS } from "@/components/Apiurls/Apiurls";
 
 interface Retailer {
   id: number;
@@ -31,9 +32,9 @@ const Dashboard = () => {
 
   // Fetch retailers
   useEffect(() => {
-    fetch("http://localhost:5000/api/retailers")
-      .then(res => res.json())
-      .then(data => {
+    fetch(`${API_URLS}/api/retailers`)
+      .then((res) => res.json())
+      .then((data) => {
         const cleanData = data.map((r: any) => {
           const { timestamp, created_at, ...rest } = r;
           return rest;
@@ -41,7 +42,7 @@ const Dashboard = () => {
         setRetailers(cleanData);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("API Error:", err);
         setLoading(false);
       });
@@ -59,8 +60,8 @@ const Dashboard = () => {
 
   // Filtered data
   const filteredData = useMemo(() => {
-    return retailers.filter(r =>
-      Object.values(r).some(val =>
+    return retailers.filter((r) =>
+      Object.values(r).some((val) =>
         String(val || "").toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
@@ -89,7 +90,9 @@ const Dashboard = () => {
   );
 
   const displayColumns = retailers[0]
-    ? Object.keys(retailers[0]).filter(col => col !== "timestamp" && col !== "created_at")
+    ? Object.keys(retailers[0]).filter(
+        (col) => col !== "timestamp" && col !== "created_at"
+      )
     : [];
 
   return (
@@ -132,7 +135,7 @@ const Dashboard = () => {
           <table className="min-w-full table-auto border-collapse">
             <thead className="bg-gray-200">
               <tr>
-                {displayColumns.map(col => (
+                {displayColumns.map((col) => (
                   <th
                     key={col}
                     className="px-4 py-2 text-left cursor-pointer whitespace-nowrap"
@@ -143,7 +146,6 @@ const Dashboard = () => {
                 ))}
               </tr>
             </thead>
-
 
             <tbody>
               {loading ? (
@@ -161,26 +163,42 @@ const Dashboard = () => {
               ) : (
                 currentData.map((r) => (
                   <tr key={r.id} className="border-t hover:bg-gray-50">
-                    {displayColumns.map(col => {
+                    {displayColumns.map((col) => {
+                      // IMAGE COLUMN
                       if (col === "shop_photo") {
                         return (
                           <td key={col} className="px-4 py-2">
-                            {r.shop_photo && (
-                              <img
-                                src={`http://localhost:5000${r.shop_photo}`}
-                                width={60}
-                                height={60}
-                                className="object-cover rounded"
-                              />
-                            )}
-                          </td>
+  {r.shop_photo && (
+    <a
+      href={`${API_URLS}/uploads/${encodeURIComponent(r.shop_photo)}`}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <img
+        src={`${API_URLS}/uploads/${encodeURIComponent(r.shop_photo)}`}
+        style={{ width: "60px", height: "60px" }} // fixed size
+        className="object-cover rounded"
+        alt="Shop"
+      />
+    </a>
+  )}
+</td>
+
+
+
                         );
-                      } else if (col === "google_map_link") {
+                      }
+                      // GOOGLE MAP COLUMN
+                      else if (col === "google_map_link") {
                         return (
                           <td key={col} className="px-4 py-2">
                             {r.google_map_link && (
                               <a
-                                href={r.google_map_link.startsWith("http") ? r.google_map_link : "https://" + r.google_map_link}
+                                href={
+                                  r.google_map_link.startsWith("http")
+                                    ? r.google_map_link
+                                    : "https://" + r.google_map_link
+                                }
                                 target="_blank"
                                 rel="noreferrer"
                                 className="text-blue-600 hover:underline"
@@ -190,13 +208,19 @@ const Dashboard = () => {
                             )}
                           </td>
                         );
-                      } else {
-                        return (
-                          <td key={col} className="px-4 py-2">
-                            {r[col as keyof Retailer]}
-                          </td>
-                        );
                       }
+                      // DEFAULT TEXT COLUMN
+                      else {
+  const value = String(r[col as keyof Retailer] ?? "");
+  const truncated = value.length > 50 ? value.substring(0, 25) + "..." : value;
+
+  return (
+    <td key={col} className="px-4 py-2" title={value}>
+      {truncated}
+    </td>
+  );
+}
+
                     })}
                   </tr>
                 ))
@@ -214,14 +238,14 @@ const Dashboard = () => {
             <button
               className="px-3 py-1 border rounded disabled:opacity-50"
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage(prev => prev - 1)}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
             >
               Prev
             </button>
             <button
               className="px-3 py-1 border rounded disabled:opacity-50"
               disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(prev => prev + 1)}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
             >
               Next
             </button>

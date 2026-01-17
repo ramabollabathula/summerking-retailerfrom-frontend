@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import axios from "axios";
+import { API_URLS } from "@/components/Apiurls/Apiurls";
 
 interface RetailerRow {
   timestamp: string | null;
@@ -73,7 +74,7 @@ const UploadRetailer: React.FC = () => {
       }
 
       const res = await axios.post(
-        "http://localhost:5000/api/bullupload",
+        `${API_URLS}/api/bullupload`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

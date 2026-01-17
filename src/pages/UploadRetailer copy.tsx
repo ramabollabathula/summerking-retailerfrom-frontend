@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import axios from "axios";
+import { API_URLS } from "@/components/Apiurls/Apiurls";
 
 const UploadRetailer: React.FC = () => {
   const [excelData, setExcelData] = useState<any[]>([]);
@@ -45,7 +46,7 @@ const UploadRetailer: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      await axios.post("http://localhost:5000/api/bullupload", { data: excelData });
+      await axios.post(`${API_URLS}/api/bullupload`, { data: excelData });
       alert("Retailers uploaded successfully!");
     } catch (err) {
       alert("Upload failed");
