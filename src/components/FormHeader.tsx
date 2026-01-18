@@ -3,7 +3,7 @@ import banner from "../assets/summerking-logo.png";
 
 const FormHeader: React.FC = () => {
   return (
-    <div className="form-card-header p-4">
+    <div className="form-card-header p-3 p-md-4">
 
       {/* Banner Image */}
       <img

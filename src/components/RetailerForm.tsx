@@ -104,7 +104,7 @@ const RetailerForm: React.FC = () => {
   return (
     <>
       <form onSubmit={handleSubmit} className="form-page-bg py-4">
-        <div className="container">
+       <div className="container-fluid px-2 px-sm-3">
           <div className="row justify-content-center">
             <div className="col-12 col-md-10 col-lg-8 col-xl-7">
               <FormHeader />

@@ -26,11 +26,9 @@ const Dashboard = () => {
   const [sortField, setSortField] = useState<SortField>("id");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
 
-  // Fetch retailers
   useEffect(() => {
     fetch(`${API_URLS}/api/retailers`)
       .then((res) => res.json())
@@ -39,6 +37,10 @@ const Dashboard = () => {
           const { timestamp, created_at, ...rest } = r;
           return rest;
         });
+
+        // 🔥 Newest data first
+        cleanData.sort((a: any, b: any) => b.id - a.id);
+
         setRetailers(cleanData);
         setLoading(false);
       })
@@ -48,7 +50,17 @@ const Dashboard = () => {
       });
   }, []);
 
-  // Sorting
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this retailer?")) return;
+
+    try {
+      await fetch(`${API_URLS}/api/retailers/${id}`, { method: "DELETE" });
+      setRetailers((prev) => prev.filter((r) => r.id !== id));
+    } catch {
+      alert("Delete failed!");
+    }
+  };
+
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -58,7 +70,6 @@ const Dashboard = () => {
     }
   };
 
-  // Filtered data
   const filteredData = useMemo(() => {
     return retailers.filter((r) =>
       Object.values(r).some((val) =>
@@ -67,22 +78,18 @@ const Dashboard = () => {
     );
   }, [retailers, searchTerm]);
 
-  // Sorted data
   const sortedData = useMemo(() => {
     return [...filteredData].sort((a: any, b: any) => {
       let aVal = a[sortField];
       let bVal = b[sortField];
-
       if (typeof aVal === "string") aVal = aVal.toLowerCase();
       if (typeof bVal === "string") bVal = bVal.toLowerCase();
-
       if (aVal < bVal) return sortDirection === "asc" ? -1 : 1;
       if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
   }, [filteredData, sortField, sortDirection]);
 
-  // Pagination calculation
   const totalPages = Math.ceil(sortedData.length / entriesPerPage);
   const currentData = sortedData.slice(
     (currentPage - 1) * entriesPerPage,
@@ -100,7 +107,6 @@ const Dashboard = () => {
       <Navbar />
 
       <div className="container mx-auto py-6">
-        {/* Header + Search + Entries dropdown */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-2 md:space-y-0">
           <h2 className="text-2xl font-semibold">Retailers Database</h2>
 
@@ -112,7 +118,7 @@ const Dashboard = () => {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1); // reset page on search
+                setCurrentPage(1);
               }}
             />
             <select
@@ -120,7 +126,7 @@ const Dashboard = () => {
               value={entriesPerPage}
               onChange={(e) => {
                 setEntriesPerPage(Number(e.target.value));
-                setCurrentPage(1); // reset to page 1
+                setCurrentPage(1);
               }}
             >
               <option value={5}>5</option>
@@ -130,7 +136,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto bg-white rounded shadow">
           <table className="min-w-full table-auto border-collapse">
             <thead className="bg-gray-200">
@@ -144,19 +149,20 @@ const Dashboard = () => {
                     {col.replaceAll("_", " ").toUpperCase()}
                   </th>
                 ))}
+                <th className="px-4 py-2 text-left whitespace-nowrap">ACTION</th>
               </tr>
             </thead>
 
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={displayColumns.length} className="text-center py-6">
+                  <td colSpan={displayColumns.length + 1} className="text-center py-6">
                     Loading...
                   </td>
                 </tr>
               ) : currentData.length === 0 ? (
                 <tr>
-                  <td colSpan={displayColumns.length} className="text-center py-6">
+                  <td colSpan={displayColumns.length + 1} className="text-center py-6">
                     No data found
                   </td>
                 </tr>
@@ -164,32 +170,26 @@ const Dashboard = () => {
                 currentData.map((r) => (
                   <tr key={r.id} className="border-t hover:bg-gray-50">
                     {displayColumns.map((col) => {
-                      // IMAGE COLUMN
                       if (col === "shop_photo") {
                         return (
                           <td key={col} className="px-4 py-2">
-  {r.shop_photo && (
-    <a
-      href={`${API_URLS}/uploads/${encodeURIComponent(r.shop_photo)}`}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <img
-        src={`${API_URLS}/uploads/${encodeURIComponent(r.shop_photo)}`}
-        style={{ width: "60px", height: "60px" }} // fixed size
-        className="object-cover rounded"
-        alt="Shop"
-      />
-    </a>
-  )}
-</td>
-
-
-
+                            {r.shop_photo && (
+                              <a
+                                href={`${API_URLS}/uploads/${encodeURIComponent(r.shop_photo)}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <img
+                                  src={`${API_URLS}/uploads/${encodeURIComponent(r.shop_photo)}`}
+                                  style={{ width: "60px", height: "60px" }}
+                                  className="object-cover rounded"
+                                  alt="Shop"
+                                />
+                              </a>
+                            )}
+                          </td>
                         );
-                      }
-                      // GOOGLE MAP COLUMN
-                      else if (col === "google_map_link") {
+                      } else if (col === "google_map_link") {
                         return (
                           <td key={col} className="px-4 py-2">
                             {r.google_map_link && (
@@ -208,20 +208,27 @@ const Dashboard = () => {
                             )}
                           </td>
                         );
+                      } else {
+                        const value = String(r[col as keyof Retailer] ?? "");
+                        const truncated =
+                          value.length > 50 ? value.substring(0, 25) + "..." : value;
+
+                        return (
+                          <td key={col} className="px-4 py-2" title={value}>
+                            {truncated}
+                          </td>
+                        );
                       }
-                      // DEFAULT TEXT COLUMN
-                      else {
-  const value = String(r[col as keyof Retailer] ?? "");
-  const truncated = value.length > 50 ? value.substring(0, 25) + "..." : value;
-
-  return (
-    <td key={col} className="px-4 py-2" title={value}>
-      {truncated}
-    </td>
-  );
-}
-
                     })}
+                    <td className="px-4 py-2 text-center">
+                      <button
+                        onClick={() => handleDelete(r.id)}
+                        className="text-red-600 hover:text-red-800"
+                        title="Delete"
+                      >
+                        🗑
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -229,7 +236,6 @@ const Dashboard = () => {
           </table>
         </div>
 
-        {/* Pagination controls */}
         <div className="flex justify-between items-center mt-4">
           <p>
             Page {currentPage} of {totalPages}

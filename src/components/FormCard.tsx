@@ -24,7 +24,7 @@ const FormCard: React.FC<FormCardProps> = ({
   onFileChange
 }) => {
   return (
-    <div className="form-card p-4">
+    <div className="form-card p-3 p-md-4">
       <div className="mb-1">
         <span className="form-label-hindi">
           {hindiLabel} {required && <span className="form-required">*</span>}
