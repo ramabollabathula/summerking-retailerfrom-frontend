@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FormHeader from "./FormHeader";
 import FormCard from "./FormCard";
 import { API_URLS } from "./Apiurls/Apiurls";
@@ -19,6 +19,19 @@ const RetailerForm: React.FC = () => {
   const [photo, setPhoto] = useState<File | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 🔒 Mobile Only Check
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkDevice();
+    window.addEventListener("resize", checkDevice);
+    return () => window.removeEventListener("resize", checkDevice);
+  }, []);
 
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -73,18 +86,16 @@ const RetailerForm: React.FC = () => {
         data.append(key, value);
       });
       if (photo) data.append("shop_photo", photo);
-      
+
       const res = await fetch(`${API_URLS}/api/retailers`, {
         method: "POST",
         body: data
       });
 
       const json = await res.json();
-      
+
       if (res.ok) {
-        // Show success modal
         setShowModal(true);
-        // Clear form
         clearForm();
       } else {
         alert(json.message || "Error submitting form");
@@ -101,10 +112,26 @@ const RetailerForm: React.FC = () => {
     setShowModal(false);
   };
 
+  // 🚫 Desktop Block
+  if (!isMobile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-6 rounded shadow text-center max-w-md">
+          <h3 className="text-xl font-semibold mb-2">Mobile Access Only</h3>
+          <p className="text-gray-600">
+            This form is available only on mobile devices.
+            <br />
+            Please open this link on your smartphone.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit} className="form-page-bg py-4">
-       <div className="container-fluid px-2 px-sm-3">
+        <div className="container-fluid px-2 px-sm-3">
           <div className="row justify-content-center">
             <div className="col-12 col-md-10 col-lg-8 col-xl-7">
               <FormHeader />
@@ -151,8 +178,8 @@ const RetailerForm: React.FC = () => {
                 </span>
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-primary w-100 mt-4"
                 disabled={isSubmitting}
               >
@@ -163,34 +190,20 @@ const RetailerForm: React.FC = () => {
         </div>
       </form>
 
-      {/* Success Modal */}
       {showModal && (
-        <div 
-          className="modal show d-block" 
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-          tabIndex={-1}
-        >
+        <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} tabIndex={-1}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header border-0">
                 <h5 className="modal-title">Success</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
-                  onClick={closeModal}
-                ></button>
+                <button type="button" className="btn-close" onClick={closeModal}></button>
               </div>
               <div className="modal-body text-center">
-               
                 <h4 className="mb-3">Thank You!</h4>
                 <p>Your form has been submitted successfully.</p>
               </div>
               <div className="modal-footer border-0 justify-content-center">
-                <button 
-                  type="button" 
-                  className="btn btn-primary" 
-                  onClick={closeModal}
-                >
+                <button type="button" className="btn btn-primary" onClick={closeModal}>
                   OK
                 </button>
               </div>
