@@ -145,13 +145,15 @@ const RetailerForm: React.FC = () => {
               <FormCard hindiLabel="संपर्क व्यक्ति का मोबाइल नंबर" englishLabel="Contact person mobile number " name="contact_mobile" value={form.contact_mobile} onChange={handleChange} />
               <FormCard hindiLabel="दुकान कितने साल पुरानी है (वर्षों में)" englishLabel="Shop age (in years)" name="shop_age" value={form.shop_age} onChange={handleChange} />
 
-              <FormCard
-                hindiLabel="दुकान की फोटो अपलोड करे"
-                englishLabel="Upload shop photo"
-                inputType="file"
-                name="shop_photo"
-                onFileChange={(file) => setPhoto(file)}
-              />
+            <FormCard
+  key={photo ? "with-photo" : "no-photo"}
+  hindiLabel="दुकान की फोटो अपलोड करे"
+  englishLabel="Upload shop photo"
+  inputType="file"
+  name="shop_photo"
+  onFileChange={(file) => setPhoto(file)}
+/>
+
 
               <div style={{ position: "relative" }}>
                 <FormCard
