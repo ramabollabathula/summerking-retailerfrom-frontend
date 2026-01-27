@@ -79,6 +79,12 @@ const RetailerForm: React.FC = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsSubmitting(true);
+    if (!form.google_map_link) {
+  alert("Please fetch your location by clicking the 📍 icon.");
+  setIsSubmitting(false);
+  return;
+}
+
 
     try {
       const data = new FormData();
@@ -156,14 +162,15 @@ const RetailerForm: React.FC = () => {
 
 
               <div style={{ position: "relative" }}>
-                <FormCard
-                  hindiLabel="Google Map लोकेशन की लिंक अपलोड करें"
-                  englishLabel="Upload google map location link"
-                  inputType="long"
-                  name="google_map_link"
-                  value={form.google_map_link}
-                  onChange={handleChange}
-                />
+               <FormCard
+  hindiLabel="Google Map लोकेशन"
+  englishLabel="Click the icon to fetch your current location"
+  inputType="long"
+  name="google_map_link"
+  value={form.google_map_link}
+  readOnly={true}
+/>
+
 
                 <span
                   onClick={getCurrentLocation}
