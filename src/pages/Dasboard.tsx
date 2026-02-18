@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Navbar from "./Navbar";
 import { API_URLS } from "@/components/Apiurls/Apiurls";
+import * as XLSX from "xlsx";
 
 interface Retailer {
   id: number;
@@ -28,6 +29,88 @@ const Dashboard = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
+
+const downloadExcel = () => {
+  if (!retailers.length) {
+    alert("Data not loaded yet");
+    return;
+  }
+
+  const mapRegex = /^https:\/\/www\.google\.com\/maps\?q=/;
+
+  const withMap = retailers.filter(
+    (r) => r.google_map_link && mapRegex.test(r.google_map_link)
+  );
+
+  const withoutMap = retailers.filter(
+    (r) => !r.google_map_link || !mapRegex.test(r.google_map_link)
+  );
+
+  const buildSheet = (data: Retailer[]) => {
+    const rows = data.map((r, index) => ({
+  "S.No": index + 1,
+      Distributor: r.distributor_name,
+      Location: r.location,
+      Salesman: r.salesman_name,
+      Shop_Name: r.shop_name,
+      Shop_Address: r.shop_address,
+      Contact_Person: r.contact_person,
+      Mobile: r.contact_mobile,
+      Shop_Age: r.shop_age,
+      Shop_Image: r.shop_photo
+        ? `${API_URLS}/uploads/${r.shop_photo}`
+        : "",
+      Google_Map: r.google_map_link || "",
+    }));
+
+    const sheet = XLSX.utils.json_to_sheet(rows);
+
+    data.forEach((r, i) => {
+      const row = i + 2;
+
+      // Shop Image hyperlink (BLUE)
+      if (r.shop_photo) {
+        const imgUrl = `${API_URLS}/uploads/${r.shop_photo}`;
+        sheet[`J${row}`].l = { Target: imgUrl };
+        sheet[`J${row}`].s = {
+          font: { color: { rgb: "0000FF" }, underline: true },
+        };
+      }
+
+      // Google Map hyperlink (BLUE)
+      if (r.google_map_link) {
+        sheet[`K${row}`].l = { Target: r.google_map_link };
+        sheet[`K${row}`].s = {
+          font: { color: { rgb: "0000FF" }, underline: true },
+        };
+      }
+    });
+
+    return sheet;
+  };
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    buildSheet(retailers),
+    "All Retailers"
+  );
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    buildSheet(withMap),
+    "With Google Map"
+  );
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    buildSheet(withoutMap),
+    "Without Google Map"
+  );
+
+  XLSX.writeFile(workbook, "retailers_report.xlsx");
+};
 
   useEffect(() => {
     fetch(`${API_URLS}/api/retailers`)
@@ -134,6 +217,12 @@ const Dashboard = () => {
               <option value={15}>15</option>
             </select>
           </div>
+         {/* <button
+  onClick={downloadExcel}
+  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+>
+  📥 Download
+</button> */}
         </div>
 
         <div className="overflow-x-auto bg-white rounded shadow">

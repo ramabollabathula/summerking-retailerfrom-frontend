@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound";
 
 import UploadRetailer from "./pages/UploadRetailer";
 import RetailerForm from "./components/RetailerForm";
+import Distributor from "./components/Distributor";
+import DistributorTable from "./pages/DistributorTable";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<RetailerForm />} />
+              <Route path="/distributor" element={<Distributor />} />
             <Route path="/login" element={<Login />} />
             <Route
               path="/dashboard"
@@ -33,10 +36,10 @@ const App = () => (
               }
             />
              <Route
-              path="/bulkupload"
+              path="/distributor-table"
               element={
                 <ProtectedRoute>
-                  <UploadRetailer />
+                  <DistributorTable />
                 </ProtectedRoute>
               }
             />
