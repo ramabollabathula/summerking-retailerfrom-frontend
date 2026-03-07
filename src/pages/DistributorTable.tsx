@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Navbar from "./Navbar";
+import * as XLSX from "xlsx";
 import { API_URLS } from "@/components/Apiurls/Apiurls";
 
 interface Distributor {
@@ -20,7 +21,15 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
 
-  // 🔥 Fetch Data
+  // Excel Download
+  const downloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(sortedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Distributors");
+    XLSX.writeFile(workbook, "distributors.xlsx");
+  };
+
+  // Fetch Data
   useEffect(() => {
     fetch(`${API_URLS}/api/distributorsdetails`)
       .then((res) => res.json())
@@ -34,7 +43,7 @@ const Dashboard = () => {
       });
   }, []);
 
-  // 🔥 Delete
+  // Delete Distributor
   const handleDelete = async (id: number) => {
     if (!window.confirm("Are you sure you want to delete this distributor?"))
       return;
@@ -50,7 +59,13 @@ const Dashboard = () => {
     }
   };
 
-  // 🔥 Search
+  // Copy Text
+  const copyText = (text: string) => {
+    navigator.clipboard.writeText(text);
+    alert("Copied!");
+  };
+
+  // Search Filter
   const filteredData = useMemo(() => {
     return distributors.filter((d) =>
       Object.values(d).some((val) =>
@@ -61,12 +76,12 @@ const Dashboard = () => {
     );
   }, [distributors, searchTerm]);
 
-  // 🔥 Always DESC by ID
+  // Sort DESC
   const sortedData = useMemo(() => {
     return [...filteredData].sort((a, b) => b.id - a.id);
   }, [filteredData]);
 
-  // 🔥 Pagination
+  // Pagination
   const totalPages = Math.ceil(sortedData.length / entriesPerPage);
 
   const currentData = sortedData.slice(
@@ -87,6 +102,7 @@ const Dashboard = () => {
       <Navbar />
 
       <div className="container mx-auto py-6">
+
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-2 md:space-y-0">
           <h2 className="text-2xl font-semibold">
@@ -94,6 +110,14 @@ const Dashboard = () => {
           </h2>
 
           <div className="flex items-center space-x-2">
+
+            <button
+              onClick={downloadExcel}
+              className="bg-green-600 text-white px-3 py-2 rounded-md"
+            >
+              Download Excel
+            </button>
+
             <input
               type="text"
               placeholder="Search..."
@@ -117,21 +141,20 @@ const Dashboard = () => {
               <option value={10}>10</option>
               <option value={15}>15</option>
             </select>
+
           </div>
         </div>
 
         {/* Table */}
         <div className="overflow-x-auto bg-white rounded shadow">
           <table className="min-w-full table-auto border-collapse">
+
             <thead className="bg-gray-200">
               <tr>
                 <th className="px-4 py-2 text-left">S.NO</th>
 
                 {displayColumns.map((col) => (
-                  <th
-                    key={col}
-                    className="px-4 py-2 text-left"
-                  >
+                  <th key={col} className="px-4 py-2 text-left">
                     {col.replaceAll("_", " ").toUpperCase()}
                   </th>
                 ))}
@@ -167,6 +190,7 @@ const Dashboard = () => {
                     key={d.id}
                     className="border-t hover:bg-gray-50"
                   >
+
                     {/* Serial Number */}
                     <td className="px-4 py-2">
                       {(currentPage - 1) *
@@ -175,40 +199,57 @@ const Dashboard = () => {
                         1}
                     </td>
 
-                    {/* Data Columns with ... */}
-                    {displayColumns.map((col) => (
-                      <td
-                        key={col}
-                        className={`px-4 py-2 truncate ${
-                          col === "address"
-                            ? "max-w-[220px]"
-                            : "max-w-[150px]"
-                        }`}
-                        title={String(
-                          d[col as keyof Distributor] ?? ""
-                        )}
-                      >
-                        {String(
-                          d[col as keyof Distributor] ?? ""
-                        )}
-                      </td>
-                    ))}
+                    {/* Columns */}
+                    {displayColumns.map((col) => {
+                      const value = String(
+                        d[col as keyof Distributor] ?? ""
+                      );
 
-                    {/* Delete Button */}
+                      return (
+                        <td
+                          key={col}
+                          className={`px-4 py-2 ${
+                            col === "address"
+                              ? "max-w-[220px]"
+                              : "max-w-[150px]"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+
+                            <span className="truncate" title={value}>
+                              {value}
+                            </span>
+
+                            {(col === "address" ||
+                              col === "target_area") && (
+                              <button
+                                onClick={() => copyText(value)}
+                                className="text-blue-600 text-sm"
+                              >
+                                📋
+                              </button>
+                            )}
+
+                          </div>
+                        </td>
+                      );
+                    })}
+
+                    {/* Delete */}
                     <td className="px-4 py-2 text-center">
                       <button
-                        onClick={() =>
-                          handleDelete(d.id)
-                        }
+                        onClick={() => handleDelete(d.id)}
                         className="text-red-600 hover:text-red-800"
                       >
                         🗑
                       </button>
                     </td>
+
                   </tr>
                 ))
               )}
             </tbody>
+
           </table>
         </div>
 
@@ -219,6 +260,7 @@ const Dashboard = () => {
           </p>
 
           <div className="flex space-x-2">
+
             <button
               className="px-3 py-1 border rounded disabled:opacity-50"
               disabled={currentPage === 1}
@@ -241,8 +283,10 @@ const Dashboard = () => {
             >
               Next
             </button>
+
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -91,11 +91,11 @@ const downloadExcel = () => {
 
   const workbook = XLSX.utils.book_new();
 
-  XLSX.utils.book_append_sheet(
-    workbook,
-    buildSheet(retailers),
-    "All Retailers"
-  );
+  // XLSX.utils.book_append_sheet(
+  //   workbook,
+  //   buildSheet(retailers),
+  //   "All Retailers"
+  // );
 
   XLSX.utils.book_append_sheet(
     workbook,
@@ -103,11 +103,11 @@ const downloadExcel = () => {
     "With Google Map"
   );
 
-  XLSX.utils.book_append_sheet(
-    workbook,
-    buildSheet(withoutMap),
-    "Without Google Map"
-  );
+  // XLSX.utils.book_append_sheet(
+  //   workbook,
+  //   buildSheet(withoutMap),
+  //   "Without Google Map"
+  // );
 
   XLSX.writeFile(workbook, "retailers_report.xlsx");
 };
@@ -194,6 +194,12 @@ const downloadExcel = () => {
           <h2 className="text-2xl font-semibold">Retailers Database</h2>
 
           <div className="flex items-center space-x-2">
+            <button
+  onClick={downloadExcel}
+  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+>
+  📥 Download
+</button>
             <input
               type="text"
               placeholder="Search any field..."
@@ -217,12 +223,7 @@ const downloadExcel = () => {
               <option value={15}>15</option>
             </select>
           </div>
-         {/* <button
-  onClick={downloadExcel}
-  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
->
-  📥 Download
-</button> */}
+         
         </div>
 
         <div className="overflow-x-auto bg-white rounded shadow">
